@@ -1,0 +1,259 @@
+上机环境：linux系统，vim编辑器，Perl语言：5.22.0
+1.	配置vim环境：cp /home/teacher/.vimrc  ~/.vimrc
+2.	配置Perl语言环境：
+
+echo "export PATH=/home/teacher/.plenv/bin:$PATH" >>~/.bashrc（注意是 >> ）
+echo "eval "$(plenv init -)" >>~/.bashrc 
+source ~/.bashrc
+
+3. 拷贝测试文件：test.fa，test.fa.gz
+
+调试方法：新建一个.pl文件，并且使用vim编辑，使用ctrl+P来查看运行结果
+
+1.	标量
+	1. 标量的表示，赋值;
+		输入：	
+		$hello = "hello world!\n";
+		print $hello;
+		查看结果：
+		hello world！
+	2. 标量的类型以及上下文;
+		输入：
+		$a = '5GeRen';
+		$b = '10GePingguo';
+		print $a + $b;
+		print "\n";
+		print "$a + $b \n";
+		print "$a"."$b\n"
+		输出结果：
+		15
+		5GeRen+10GePingguo
+		5GeRen10GePingguo
+	3. 常用的内置标量
+		输入：
+		open IN,"test.fa";
+		$/ = ">";
+		<IN>;
+		while(<IN>){
+			chomp;
+			print "reading:\n$_";
+		}
+		close IN;
+		输出结果：
+		//... 三个  reading：序列
+		@a = (1,2,3);
+		print "@a\n";
+		$" = "\t";
+		print "@a\n";
+		输出结果：
+		1 2 3
+		1    2    3
+2.	数组
+	1. 数组的表示，定义：
+		输入：
+		@a = ('a','b','c');
+		print "@a\n";
+		print 1 + @a;
+		print "\n";
+		@a = ['a','b','c'];
+		print "@a\n";
+		输出：
+		a b c
+		4
+		ARRAY(0x1325eb0)  ;#括号中的值根据实际情况会有所不同
+	2. 数组的访问、解析：
+		输入：
+		@a = ('a','b','c');
+		print "$a[0]\n";
+		print "$a[-1]\n";
+		($a,$b,$c) = @a;
+		print "$a\t$b\t$c\n";
+		输出：
+		a
+		c
+		a    b    c
+	3. 范围操作符：
+		输入：
+		@a = (1 .. 5);
+		print "@a\n";
+		输出：
+		1 2 3 4 5
+	4. 数组的排序：
+		输入：
+		@a = (1,3,2,5,4,11,15);
+		print "@a\n";
+		@a = sort @a;
+		print "@a\n";
+		@a = sort {$a<=>$b} @a;
+		print "@a\n";
+		输出：
+		1 3 2 5 4 11 15
+		1 11 15 2 3 4 5
+		1 2 3 4 5 11 15
+	5. 数组的链接与拆解：
+		输入：
+		@a = ('a','b','c');
+		$a = join('#',@a);
+		print "$a\n";
+		@b = split /#/, $a;
+		print "@b\n";
+		输出：
+		a#b#c
+		a b c
+3. 哈希表
+	1. 哈希表的表示、定义：
+		输入：
+		%a = ('one'=>1,'two'=>2,'three'=>3);
+		print %a;
+		print "\n";
+		输出：
+		three3two2one1
+	2. 哈希表的访问：
+		输入：
+		%a = ('one'=>1,'two'=>2,'three'=>3);
+		@b = keys %a;
+		print "@b\n";
+		@b = sort keys %a;
+		print "@b\n";
+		@c = values %a;
+		print "@c\n";
+		print "$a{'one'}";
+		输出：
+		three one two  ;#顺序根据实际情况会有所不同
+		one three two  ;#顺序恒定
+		3 1 2   	   ;#顺序由第一条输出决定
+		1
+4. *强化课程：引用
+	1. 引用的表示
+		输入：
+		$a = 1;
+		print "$a\n"
+		print \$a;
+		print "\n";
+		输出：
+		1
+		SCALAR(0x1a066d0)  ;#括号中的值根据实际情况有所不同
+	2. 引用的解析
+		输入：
+		$a = ['a','b','c'];
+		print "$a\n";
+		print "@{$a}\n";
+		@a = ('a','b','c');
+		print \@a;
+		print "\n";
+		print "@{\@a}\n";
+		输出：
+		ARRAY(0x122fe78)  ;#括号中的值根据实际情况有所不同
+		a b c
+		ARRAY(0x12587f0)  ;#括号中的值根据实际情况有所不同，但是和上面的值之差恒为一个固定值
+		a b c
+	3. 数组与哈希的嵌套：
+		输入：
+		@a = ('a','b','c');
+		@b = (1,2,3);
+		@c = (\@a,\@b);
+		print "$c[0][1]";
+		foreach (@c){
+			foreach ( @{$_} ){     #
+				print "$_"		   #思考这两个$_的意义 		
+			}
+		}
+		print "\n";
+		输出：
+		b
+		a       b       c       1       2       3
+
+		
+
+
+	4. *课外扩展练习
+		输入：
+		@a = ('a','b','c');
+		@b = (1,2,3);
+		@c = (\@a,\@b);
+		$d[0] = ('a','b','c');
+		print @{$d[0]};
+		求解输出结果，思考为什么是这个结果
+5. 分支与循环
+	1. if语句、单行if、三目操作符
+		输入：
+		$a = 1;
+		if ($a==1){
+			print '$a is 1';
+		}elsif ($a==2){
+			print '$a is 2';
+		}else{
+			print '$a is others';
+		}
+		print "\n";
+		print '$a is 1' if $a==1;
+		$a == 1 ? print '$a is 1' : print '$a is not 1';
+		print "\n";
+		输出：
+		$a is 1
+		$a is 1
+		$a is 1
+	2. for循环
+		输入：
+		for($i=0;$i<5;$i++){
+			print "$i\t";
+		}
+		print "\n";
+		输出：
+		0    1    2    3    4	
+	3. foreach循环
+		输入：
+		@a = ('a','b','c');
+		foreach(@a){
+			print "$_\t";
+		}
+		print "\n";
+		%a = ('a'=>1,'b'=>2,'c'=>3);
+		foreach $k(sort keys %a){
+			print "$k=>$a{$k}\n";
+		}
+		输出：
+		a    b    c
+		a=>1
+		b=>2
+		c=>3
+	4. while循环
+		输入：
+		@a = ('a','b','c');
+		$i = 0;
+		while($i<@a){
+			print "$a[$i]\t";
+			$i++;
+		}
+		print "\n";
+		do{
+			$i--;
+			print "$a[$i]\t";
+		}while($i);
+		输出：
+		a    b    c
+		c    b    a
+	5. 循环控制：
+		输入：
+		for($i=0;$i<10;$i++){
+			next if $i % 2 == 0;
+			print "$i\t";
+			last if $i > 5;
+		}
+		print "\n";
+		输出：
+		1    3    5    7
+
+
+
+
+
+
+
+
+
+
+
+
+
+
