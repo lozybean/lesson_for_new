@@ -11,7 +11,7 @@ source ~/.bashrc
 调试方法：新建一个.pl文件，并且使用vim编辑，使用ctrl+P来查看运行结果
 
 1. 标量
-	1. 标量的表示，赋值;
+	1. 标量的表示，赋值;/*{{{*/
 		输入：	
 		$hello = "hello world!\n";
 		print $hello;
@@ -47,9 +47,9 @@ source ~/.bashrc
 		print "@a\n";
 		输出结果：
 		1 2 3
-		1    2    3
+		1    2    3/*}}}*/
 2. 数组
-	1. 数组的表示，定义：
+	1. 数组的表示，定义：/*{{{*/
 		输入：
 		@a = ('a','b','c');
 		print "@a\n";
@@ -128,9 +128,9 @@ source ~/.bashrc
 		print "@b\n";
 		输出：
 		a#b#c
-		a b c
+		a b c/*}}}*/
 3. 哈希表
-	1. 哈希表的表示、定义：
+	1. 哈希表的表示、定义：/*{{{*/
 		输入：
 		%a = ('one'=>1,'two'=>2,'three'=>3);
 		print %a;
@@ -151,9 +151,9 @@ source ~/.bashrc
 		three one two  ;#顺序根据实际情况会有所不同
 		one three two  ;#顺序恒定
 		3 1 2   	   ;#顺序由第一条输出决定
-		1
+		1/*}}}*/
 4. 字符串操作
-	1. 常用函数：
+	1. 常用函数：/*{{{*/
 		输入：
 		$a = 'a$b#c&d';
 		print substr($a,0,2);
@@ -190,9 +190,9 @@ source ~/.bashrc
 		$a = 'a string include \' ';
 		print $a;
 		输出：
-		a string include '
+		a string include '/*}}}*/
 5. *强化课程：引用
-	1. 引用的表示
+	1. 引用的表示/*{{{*/
 		输入：
 		$a = 1;
 		print "$a\n"
@@ -237,9 +237,9 @@ source ~/.bashrc
 		@c = (\@a,\@b);
 		$d[0] = ('a','b','c');
 		print @{$d[0]};
-		求解输出结果，思考为什么是这个结果
+		求解输出结果，思考为什么是这个结果/*}}}*/
 6. 分支与循环
-	1. if语句、单行if、三目操作符
+	1. if语句、单行if、三目操作符/*{{{*/
 		输入：
 		$a = 1;
 		if ($a==1){
@@ -333,9 +333,9 @@ source ~/.bashrc
 		}
 		print "\n";
 		输出：
-		1    3    5    7
+		1    3    5    7/*}}}*/
 7. 子例程
-	1. 子例程的表示
+	1. 子例程的表示/*{{{*/
 		输入：
 		sub hello{
 			($name) = @_;
@@ -369,9 +369,9 @@ source ~/.bashrc
 		&hello(\%d,\@a);
 		输出：
 		a1b2  ;#由于哈希是无序的，根据实际情况还可能是b2a1
-		abc
+		abc/*}}}*/
 8. 文件操作
-	1. 文件的读入
+	1. 文件的读入/*{{{*/
 		输入：
 		open IN,"test.fa" or die $!;
 		while(<IN>){
@@ -422,9 +422,9 @@ source ~/.bashrc
 		out.close();
 		查看结果：less test.out:
 		out1
-		out2
+		out2/*}}}*/
 9. 正则表达式
-	1. 绑定与匹配 ： =~ :绑定操作符，默认匹配$_;  m// ：匹配操作，m可以省略，也可以写作m# #等，其他字符表示界限；
+	1. 绑定与匹配 ： =~ :绑定操作符，默认匹配$_;  m// ：匹配操作，m可以省略，也可以写作m# #等，其他字符表示界限；/*{{{*/
 		输入：
 		$a = 'this is a string';
 		print '$a include this' if $a =~ /this/;
@@ -532,10 +532,10 @@ source ~/.bashrc
 		print "$a\n";
 		输出：
 		acTg
-		TcTg Tctg TCtG
+		TcTg Tctg TCtG/*}}}*/
 		
 实战练习1：过滤组装结果
-	输入：
+	输入：/*{{{*/
 		open IN,'test.scafSeq' or die $!;
 		open OUT,'>testout.scafSeq' or die $!;
 		$/ = '>';
@@ -554,25 +554,6 @@ source ~/.bashrc
 		grep -c '>' test.scafSeq
 		368
 		grep -c '>' testout.scafSeq
-		24
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		24/*}}}*/
 
 
