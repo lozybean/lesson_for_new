@@ -1,0 +1,559 @@
+上机环境：linux系统，vim编辑器，Perl语言：5.22.0
+1.	配置vim环境：cp /home/teacher/.vimrc  ~/.vimrc
+2.	配置Perl语言环境：
+
+echo "export PATH=/home/teacher/.plenv/bin:$PATH" >>~/.bashrc（注意是 >> ）
+echo "eval "$(plenv init -)" >>~/.bashrc 
+source ~/.bashrc
+
+3. 拷贝测试文件：test.fa，test.fa.gz
+
+调试方法：新建一个.pl文件，并且使用vim编辑，使用ctrl+P来查看运行结果
+
+1. 标量
+	1. 标量的表示，赋值;/*{{{*/
+		输入：	
+		$hello = "hello world!\n";
+		print $hello;
+		查看结果：
+		hello world！
+	2. 标量的类型以及上下文;
+		输入：
+		$a = '5GeRen';
+		$b = '10GePingguo';
+		print $a + $b;
+		print "\n";
+		print "$a + $b \n";
+		print "$a"."$b\n"
+		输出结果：
+		15
+		5GeRen+10GePingguo
+		5GeRen10GePingguo
+	3. 常用的内置标量
+		输入：
+		open IN,"test.fa";
+		$/ = ">";
+		<IN>;
+		while(<IN>){
+			chomp;
+			print "reading:\n$_";
+		}
+		close IN;
+		输出结果：
+		//... 三个  reading：序列
+		@a = (1,2,3);
+		print "@a\n";
+		$" = "\t";
+		print "@a\n";
+		输出结果：
+		1 2 3
+		1    2    3/*}}}*/
+2. 数组
+	1. 数组的表示，定义：/*{{{*/
+		输入：
+		@a = ('a','b','c');
+		print "@a\n";
+		print 1 + @a;
+		print "\n";
+		@a = ['a','b','c'];
+		print "@a\n";
+		输出：
+		a b c
+		4
+		ARRAY(0x1325eb0)  ;#括号中的值根据实际情况会有所不同
+	2. 数组的访问、解析：
+		输入：
+		@a = ('a','b','c');
+		print "$a[0]\n";
+		print "$a[-1]\n";
+		($a,$b,$c) = @a;
+		print "$a\t$b\t$c\n";
+		输出：
+		a
+		c
+		a    b    c
+	3. 队列:先进先出
+		输入：
+		@a = ('a','b','c');
+		$b = shift @a;
+		print "$b\n";
+		$c = shift @a;
+		print "$c\n";
+		push(@a,'d');
+		print "@a\n";
+		输出：
+		a
+		b
+		c d
+	4. 栈：后进先出
+		输入：
+		@a = ('a','b','c');
+		$b = pop(@a);
+		print "$b\n";
+		$c = pop(@a);
+		print "$c\n";
+		unshift(@a,'d');
+		unshift(@a,'e');
+		print "@a\n";
+		输出:
+		c
+		b
+		e d a
+	##	助记：shift、unshift都对数组头进行操作；shift将元素从头部压出，unshift将元素压入头部；
+			  push、pop都对数组尾进行操作；pop将元素从尾部压出，push将元素压入尾部；
+	5. 范围操作符：
+		输入：
+		@a = (1 .. 5);
+		print "@a\n";
+		输出：
+		1 2 3 4 5
+	6. 数组的排序：
+		输入：
+		@a = (1,3,2,5,4,11,15);
+		print "@a\n";
+		@a = sort @a;
+		print "@a\n";
+		@a = sort {$a<=>$b} @a;
+		print "@a\n";
+		输出：
+		1 3 2 5 4 11 15
+		1 11 15 2 3 4 5
+		1 2 3 4 5 11 15
+	7. 数组的链接与拆解：
+		输入：
+		@a = ('a','b','c');
+		$a = join('#',@a);
+		print "$a\n";
+		@b = split /#/, $a;
+		print "@b\n";
+		输出：
+		a#b#c
+		a b c/*}}}*/
+3. 哈希表
+	1. 哈希表的表示、定义：/*{{{*/
+		输入：
+		%a = ('one'=>1,'two'=>2,'three'=>3);
+		print %a;
+		print "\n";
+		输出：
+		three3two2one1
+	2. 哈希表的访问：
+		输入：
+		%a = ('one'=>1,'two'=>2,'three'=>3);
+		@b = keys %a;
+		print "@b\n";
+		@b = sort keys %a;
+		print "@b\n";
+		@c = values %a;
+		print "@c\n";
+		print "$a{'one'}";
+		输出：
+		three one two  ;#顺序根据实际情况会有所不同
+		one three two  ;#顺序恒定
+		3 1 2   	   ;#顺序由第一条输出决定
+		1/*}}}*/
+4. 字符串操作
+	1. 常用函数：/*{{{*/
+		输入：
+		$a = 'a$b#c&d';
+		print substr($a,0,2);
+		print "\n";
+		print length($a);
+		print "\n";
+		@a = split /\$|#|&/, $a;
+		print "@a\n";
+		$a = join("#",@a);
+		print $a;
+		print "\n";
+		输出：
+		a$
+		a b c d
+		a#b#c#d
+	2. 字符串中的变量内插
+		输入：
+		$a = 'xiaoming';
+		$b = 16;
+		print "Hello, I am $a, ${b}years old!\n"
+		输出：
+		hello , I am xiaoming, 16years old
+	3. 单引号和双引号
+		输入：
+		$a = 'a string';
+		print '$a\n';
+		print "$a\n";
+		输出：
+		$a\na string
+	4. 特殊字符与转义
+		如果要在字符串中表示特殊字符：\ $ @ '(单引号中) "(双引号中) 以及其他会产生语意不明的字符, 需要在这些字符前加\;
+		转义字符：\t,\n,等，在前面加\可取消转义;
+		输入：
+		$a = 'a string include \' ';
+		print $a;
+		输出：
+		a string include '/*}}}*/
+5. *强化课程：引用
+	1. 引用的表示/*{{{*/
+		输入：
+		$a = 1;
+		print "$a\n"
+		print \$a;
+		print "\n";
+		输出：
+		1
+		SCALAR(0x1a066d0)  ;#括号中的值根据实际情况有所不同
+	2. 引用的解析
+		输入：
+		$a = ['a','b','c'];
+		print "$a\n";
+		print "@{$a}\n";
+		@a = ('a','b','c');
+		print \@a;
+		print "\n";
+		print "@{\@a}\n";
+		输出：
+		ARRAY(0x122fe78)  ;#括号中的值根据实际情况有所不同
+		a b c
+		ARRAY(0x12587f0)  ;#括号中的值根据实际情况有所不同，但是和上面的值之差恒为一个固定值
+		a b c
+	3. 数组与哈希的嵌套：
+		输入：
+		@a = ('a','b','c');
+		@b = (1,2,3);
+		@c = (\@a,\@b);
+		print "$c[0][1]";
+		foreach (@c){
+			foreach ( @{$_} ){     #
+				print "$_";		   #思考这两个$_的意义 		
+			}
+		}
+		print "\n";
+		输出：
+		b
+		a       b       c       1       2       3
+	4. *课外扩展练习
+		输入：
+		@a = ('a','b','c');
+		@b = (1,2,3);
+		@c = (\@a,\@b);
+		$d[0] = ('a','b','c');
+		print @{$d[0]};
+		求解输出结果，思考为什么是这个结果/*}}}*/
+6. 分支与循环
+	1. if语句、单行if、三目操作符/*{{{*/
+		输入：
+		$a = 1;
+		if ($a==1){
+			print '$a is 1';
+		}elsif ($a==2){
+			print '$a is 2';
+		}else{
+			print '$a is others';
+		}
+		print "\n";
+		print '$a is 1' if $a==1;
+		$a == 1 ? print '$a is 1' : print '$a is not 1';
+		print "\n";
+		输出：
+		$a is 1
+		$a is 1
+		$a is 1
+	2. unless,常用于单行语句:
+		输入：
+		$a = 1;
+		print '$a is not 2' unless $a == 2;
+		输出：
+		$a is not 2
+	3. perl中的真和假
+		所有非空字符串、非空数组和字典、非"0"字符串、非0的已定义的值都为真
+		否则空字符串、空数组、空字典、"0"字符串、0、以及未定义的值都为假
+		输入：
+		$a = '';
+		print '$a is True' if $a;
+		$b = '0';
+		print '$b is True'  if $b;
+		$c = '0.0';
+		print '$c is True' if $c;
+		@d = ();
+		print '@c is True' if @d;
+		%e = ();
+		print '%d is True' if %e;
+		$f = 0;
+		print '$f is True' if $f;
+		$g = 0.0;
+		print '$g is True' if $g;
+		print '$h is True' if $h;
+		输出：
+		$c is True
+	4. for循环
+		输入：
+		for($i=0;$i<5;$i++){
+			print "$i\t";
+		}
+		print "\n";
+		输出：
+		0    1    2    3    4	
+	5. foreach循环
+		输入：
+		@a = ('a','b','c');
+		foreach(@a){
+			print "$_\t";
+		}
+		print "\n";
+		%a = ('a'=>1,'b'=>2,'c'=>3);
+		foreach $k(sort keys %a){
+			print "$k=>$a{$k}\n";
+		}
+		输出：
+		a    b    c
+		a=>1
+		b=>2
+		c=>3
+	6. while循环
+		输入：
+		@a = ('a','b','c');
+		$i = 0;
+		while($i<@a){
+			print "$a[$i]\t";
+			$i++;
+		}
+		print "\n";
+		do{
+			$i--;
+			print "$a[$i]\t";
+		}while($i);
+		输出：
+		a    b    c
+		c    b    a
+	7. 循环控制：
+		输入：
+		for($i=0;$i<10;$i++){
+			next if $i % 2 == 0;
+			print "$i\t";
+			last if $i > 5;
+		}
+		print "\n";
+		输出：
+		1    3    5    7/*}}}*/
+7. 子例程
+	1. 子例程的表示/*{{{*/
+		输入：
+		sub hello{
+			($name) = @_;
+			return "hello $name!\n";
+		}
+		$a = &hello('xiaoming');
+		print $a;
+		输出：
+		hello xiaoming!
+	2. 子例程调用参数：
+		输入：
+		sub hello{
+			($name,$age) = @_;
+			return "hello I am $name, $age years old, nice to meet you!\n";
+		}
+		$a = &hello('xiaoming',16);
+		print $a;
+		输出：
+		hello I am xiaoming , 16 years old, nice to meet you!
+	3. 子例程调用非标量参数：
+		输入：
+		sub hello{
+			($dict,$array) = @_;
+			print %{$dict};
+			print "\n";
+			print @{$array};
+			print "\n";
+		}
+		%d = ('a'=>1,'b'=>2);
+		@a = ('a','b','c');
+		&hello(\%d,\@a);
+		输出：
+		a1b2  ;#由于哈希是无序的，根据实际情况还可能是b2a1
+		abc/*}}}*/
+8. 文件操作
+	1. 文件的读入/*{{{*/
+		输入：
+		open IN,"test.fa" or die $!;
+		while(<IN>){
+			print ;
+		}
+		close IN;
+		输出：
+		// 原文件内容
+		输入；
+		open IN,"test.fa" or die $!;
+		$/ = '>';
+		<IN>;
+		while(<IN>){
+			chomp;
+			@lines = split /\n/;
+			$id = shift @lines;
+			$seq = join("",@lines);
+			print "$id\n";
+		}
+		close IN;
+		输出：
+		16S1.1_1
+		16S1.1_2
+		16S1.1_3
+	2. 管道操作
+		通过管道读取压缩文件：
+		输入：
+		$/ = '>';
+		open IN,"gunzip -cd test.fa.gz|" or die $!; #除了gunzip，任何已经在系统上安装的程序都可以通过管道调用，如sed、awk等；
+		<IN>;
+		while(<IN>){
+			chomp;
+			@lines = split /\n/;
+			$id = shift @lines;
+			$seq = join("",@lines);
+			print "$id\n";
+		}
+		close IN;
+		输出：
+		16S1.1_1
+		16S1.1_2
+		16S1.1_3
+		通过管道输出到文件：
+		输入：
+		open OUT,">test.out" or die $!;
+		print OUT　"out1\n";
+		print OUT　"out2\n";
+		out.close();
+		查看结果：less test.out:
+		out1
+		out2/*}}}*/
+9. 正则表达式
+	1. 绑定与匹配 ： =~ :绑定操作符，默认匹配$_;  m// ：匹配操作，m可以省略，也可以写作m# #等，其他字符表示界限；/*{{{*/
+		输入：
+		$a = 'this is a string';
+		print '$a include this' if $a =~ /this/;
+		print "\n";
+		print '$a do not include that' unless $a =~ /that/;
+		print "\n";
+		输出：
+		$a include this
+		$a do not include that
+	2. 原字符：\ : 转义和取消转义，| :选择， (): 分组，[]：字符集
+		输入：
+		$a = 'abc abb adcd abbdc \t';
+		print '$a include \'\t\' ' if $a =~ /\\t/;
+		print "\n";
+		print '$a include a or b' if $a =~ /a|b/;  # 同[ab]
+		print "\n";
+		print '$a include abc or abcc' if $a =~ /(abc)|(abcc)/;
+		print "\n";
+		print '$a include words' if $a =~ /[a-zA-Z]/;
+		print "\n";
+		输出：
+		$a include '\t'
+		$a include a or b
+		$a include abc or abcc
+		$a include words
+	3. 元符号：\d \D \w \W \s \S \b \B
+		\d 表示一个数字，大写\D 表示非数字
+		\w 表示一个字，大写\W 表示非字
+		\s 表示一个空白，大写\S 表示非空白
+		\b 表示单词边界，大写\B 表示非单词边界
+	3. 量词：
+		输入：
+		$a = 'aaa b c d ';
+		print '$a include no or some \'a\'' if $a =~ /a*/;
+		print "\n";
+		print '$a include one or more than one \'a\'' if $a =~ /a+/;
+		print "\n";
+		print '$a include e or not' if $a =~ /e?/;
+		print "\n";
+		$a = 'a foofoofoo string';
+		print '$a include 3 foo' if $a=~/(foo){3}/;
+		print "\n";
+        print '$a include 2-5 foo' if $a=~/(foo){2,5}/;
+        print "\n";
+		输出：
+		$a include no or some 'a'
+		$a include one or more than one 'a'
+		$a include e or not
+		$a include 3 foo
+		$a include 2-5 foo
+	4. 锚定边界：
+		输入：
+		$a = 'abcd abcde 212 2122 abd';
+		print '$a include abcd in front' if $a =~ /^abcd/;
+		print "\n";
+		print '$a include abd at last' if $a =~ /abd$/;
+		print "\n";
+		print '$a include a word 212' if $a =~ /\b212\b/;
+		print "\n";
+		print '$a include a word has 212 inside' if $a =~/\b212\B/;
+		输出：
+		$a include abcd in front
+		$a include abd at last
+		$a include a word 212
+		$a include a word has 212 inside
+	5. 捕获：
+		输入：
+		$a = 'abcabc abcd aaaa';
+		$a =~ /(\w+)\s+aaaa/;
+		print "$1\n";
+		$a =~ /abcabc\s+(\w+)/;
+		print "$1\n";
+		$a =~ /(abc){2}\s+(\w+)/;
+		print "$1\t$2\n";
+		$a =~ /(?:abc){2}\s+(\w+)/;
+		print "$1\n";
+		输出：
+		abcd
+		abcd
+		abc     abcd
+		abcd
+	6. 替换和转换：s///：将一个模式替换为另外的文本；tr///：将一个文本转换为另外的文本
+		输入：
+		$s = 'AGCT TCCG GTTA';
+		$a = $s;
+		$a =~ s/AGCT/ABCD/;
+		print "$a\n";
+		$a = $s;
+		$a =~ tr/AGCT/TCGA/;
+		print "$a\n";
+		$a = $s;
+		$a =~ s/[AGCT]/[TCGA]/;
+		print "$a\n";
+		输出：
+		ABCD TCCG GTTA
+		TCGA AGGC CAAT
+		[TCGA]GCT TCCG GTTA
+	7. 常用修饰词： /i: 忽略大小写，/g：匹配所有，/x：忽略大多数空白
+		输入：
+		$a = 'acTg Actg aCtG';
+		$a =~ /(actg)/i;
+		print "$1\n";
+		$a = 'acTg Actg aCtG';
+		$a =~ s/a/T/ig;
+		print "$a\n";
+		输出：
+		acTg
+		TcTg Tctg TCtG/*}}}*/
+		
+实战练习1：过滤组装结果
+	输入：/*{{{*/
+		open IN,'test.scafSeq' or die $!;
+		open OUT,'>testout.scafSeq' or die $!;
+		$/ = '>';
+		<IN>;
+		while(<IN>){
+		    chomp;
+		    @lines = split /\n/;
+		    $id =   shift @lines;
+		    $seq = join('',@lines);
+		    $" = "\n";
+		    print OUT ">$id\n@lines\n" if length($seq) > 500;
+		}
+		close IN;
+		close OUT;
+	检查过滤前后scaffold数量：
+		grep -c '>' test.scafSeq
+		368
+		grep -c '>' testout.scafSeq
+		24/*}}}*/
+
+
