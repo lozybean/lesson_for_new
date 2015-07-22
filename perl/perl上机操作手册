@@ -1,12 +1,8 @@
 上机环境：linux系统，vim编辑器，Perl语言：5.22.0
-1.	配置vim环境：cp /home/teacher/.vimrc  ~/.vimrc
-2.	配置Perl语言环境：
-
-echo "export PATH=/home/teacher/.plenv/bin:$PATH" >>~/.bashrc（注意是 >> ）
-echo "eval "$(plenv init -)" >>~/.bashrc 
-source ~/.bashrc
-
-3. 拷贝测试文件：test.fa，test.fa.gz
+1. 拷贝相关文件： cp /RealBio_Train/liangzb ~/Lesson
+1. 配置vim环境: cp ~/Lesson/vimrc ~/.vimrc
+2. 配置Perl语言环境：source ~/Lesson/bashrc
+3. 进入学习路径： cd ~/Lesson/perl
 
 调试方法：新建一个.pl文件，并且使用vim编辑，使用ctrl+P来查看运行结果
 
