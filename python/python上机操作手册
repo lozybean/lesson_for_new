@@ -1,1 +1,128 @@
+上机环境：linux系统，vim编辑器，Python语言：2.7.10
+1. 拷贝相关文件： cp /RealBio_Train/liangzb ~/Lesson
+1. 配置vim环境: cp ~/Lesson/vimrc ~/.vimrc
+2. 配置Perl语言环境：source ~/Lesson/bashrc
+3. 进入学习路径： cd ~/Lesson/python
 
+调试方法：新建一个.py文件，并且使用vim编辑，使用ctrl+T来查看运行结果
+
+1. 使用Biopython处理fastq文件：
+1.1. 读取fastq文件
+输入：
+
+from Bio import SeqIO
+
+read = open('test.1.fq')
+for record in SeqIO.parse(read1,'fastq'):
+    print record.id
+    print record.seq
+    print record.letter_annotations['phred_quality']
+read.close()
+
+输出：
+每一条read的状态
+
+1.2. 添加Q_ave方法：计算平均质量值
+
+输入：
+
+from __future__ import division
+from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+
+def Q_ave(self):
+    sum = 0
+    for qlist in self.letter_annotations.itervalues():
+        for q in qlist:
+            sum += int(q)
+    return sum / len(self)
+SeqRecord.Q_ave = Q_ave
+
+read1 = open('test.1.fq')
+for record in SeqIO.parse(read1,'fastq'):
+    print record.Q_ave()
+read1.close()
+
+输出：
+每一条read的平均质量值
+
+1.3 添加GC_content方法：计算序列中的GC含量
+
+输入：
+
+from __future__ import division
+from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+
+def GC_content(self):
+    GC_count = 0
+    for c in self.seq:
+        if c == 'G' or c == 'C':
+            GC_count += 1
+    return GC_count / len(self)
+
+SeqRecord.GC_content = GC_content
+read1 = open('test.1.fq')
+for record in SeqIO.parse(read1,'fastq'):
+    print '%2.2f%%'%(record.GC_content()*100)
+read1.close()
+
+输出：
+每条read的GC含量百分比
+
+1.4 输出为fasta或者fastq文件：
+
+输入：
+
+from Bio import SeqIO
+
+read1 = open('test.1.fq')
+for record in SeqIO.parse(read1,'fastq'):
+    print record.format('fasta')
+    print record.format('fastq')
+
+输出：
+每条序列fasta格式和fastq格式
+
+2. 使用biopython处理genbank数据
+2.1 读取genbank数据
+
+from Bio import SeqIO
+gb = open('K.pneumoniae.gb')
+for record in SeqIO.parse(gb,'genbank'):
+    for feature in record.features:
+        if feature.type == 'CDS':
+            print "CDS:"
+            print feature.location
+            print feature.strand
+            print feature.location.extract(record.seq)
+            for key,value in feature.qualifiers.iteritems():
+                print "\t%s ==> %s"%(key,value)
+        if feature.type == 'gene':
+            print 'gene:'
+            for key,value in feature.qualifiers.iteritems():
+                print "\t%s ==> %s"%(key,value)
+
+2.2 应用：从genbank文件中提取CDS序列并使用fasta格式保存：
+
+from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+gb = open('K.pneumoniae.gb')
+out = open('K.pneumoniae.cds.fasta','w')
+for record in SeqIO.parse(gb,'genbank'):
+    for feature in record.features:
+        if feature.type != 'CDS':
+            continue
+        id = feature.qualifiers['locus_tag'].pop(0)
+        try:
+            description = feature.qualifiers['note'].pop(0)
+        except:
+            description = ''
+        seq = feature.location.extract(record.seq)
+        fasta = SeqRecord(seq,id=id,description=description).format('fasta')
+        out.write(fasta)
+out.close()
+
+
+*有兴趣的同学可以用perl语言写一个相同功能的程序，并且思考提取过程中会遇到的问题，切身体验代码封装对程序的重要性。
+**perl中也有类似的模块：BioPerl，有基础的同学可以尝试使用BioPerl，并体会和python的不同之处，体验面向对象的优势。
